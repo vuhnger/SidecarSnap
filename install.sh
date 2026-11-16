@@ -20,6 +20,15 @@ mkdir -p "$config/Spoons"
 rm -rf "$config/Spoons/SidecarSnap.spoon"
 cp -R "$tmp/SidecarSnap-main/SidecarSnap.spoon" "$config/Spoons/"
 
+spoon="$config/Spoons/SidecarSnap.spoon"
+if xcrun --find swiftc >/dev/null 2>&1; then
+  mkdir -p "$spoon/bin"
+  xcrun swiftc -O "$spoon/sidecar-connect.swift" -o "$spoon/bin/sidecar-connect"
+else
+  echo "Xcode Command Line Tools are missing, so reconnecting after sleep is off." >&2
+  echo "Run xcode-select --install, then run this script again." >&2
+fi
+
 touch "$config/init.lua"
 if ! grep -q 'loadSpoon("SidecarSnap")' "$config/init.lua"; then
   printf '\nhs.loadSpoon("SidecarSnap"):start()\nhs.autoLaunch(true)\n' >> "$config/init.lua"

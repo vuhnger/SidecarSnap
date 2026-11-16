@@ -27,4 +27,16 @@ function M.newCounter(threshold)
   end
 end
 
+function M.newSleepTracker()
+  local connectedAtSleep = false
+  return {
+    willSleep = function(connected) connectedAtSleep = connected end,
+    didWake = function()
+      local reconnect = connectedAtSleep
+      connectedAtSleep = false
+      return reconnect
+    end,
+  }
+end
+
 return M

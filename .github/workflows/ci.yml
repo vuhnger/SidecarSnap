@@ -13,3 +13,9 @@ jobs:
       - run: lua5.4 tests/logic_test.lua
       - run: luacheck --globals hs -- SidecarSnap.spoon tests
       - run: shellcheck install.sh
+
+  helper:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - run: xcrun swiftc -O SidecarSnap.spoon/sidecar-connect.swift -o "$RUNNER_TEMP/sidecar-connect"

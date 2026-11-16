@@ -41,4 +41,16 @@ step = logic.newCounter(3)
 for _ = 1, 4 do step("right") end
 eq(step("left"), nil, "switching sides resets the count")
 
+local sleep = logic.newSleepTracker()
+sleep.willSleep(true)
+eq(sleep.didWake(), true, "reconnect when the iPad was connected at sleep")
+eq(sleep.didWake(), false, "a second wake does not reconnect again")
+
+sleep = logic.newSleepTracker()
+sleep.willSleep(false)
+eq(sleep.didWake(), false, "no reconnect when the iPad was not connected at sleep")
+
+sleep = logic.newSleepTracker()
+eq(sleep.didWake(), false, "no reconnect on a wake without a recorded sleep")
+
 print("all tests passed")
