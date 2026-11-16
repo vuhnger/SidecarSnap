@@ -35,6 +35,10 @@ if ! grep -q 'loadSpoon("SidecarSnap")' "$config/init.lua"; then
 fi
 
 pkill -x Hammerspoon || true
+for _ in $(seq 50); do
+  pgrep -x Hammerspoon >/dev/null || break
+  sleep 0.2
+done
 open -a Hammerspoon
 
 echo "SidecarSnap installed. Give Hammerspoon Accessibility access when macOS asks."
