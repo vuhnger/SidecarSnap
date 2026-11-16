@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y lua5.4 lua-check shellcheck
+      - run: lua5.4 tests/logic_test.lua
+      - run: luacheck --globals hs -- SidecarSnap.spoon tests
+      - run: shellcheck install.sh
+
+  helper:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - run: xcrun swiftc -O SidecarSnap.spoon/sidecar-connect.swift -o "$RUNNER_TEMP/sidecar-connect"
