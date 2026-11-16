@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="vuhnger/SidecarSnap"
+config="$HOME/.hammerspoon"
+
+if [ ! -d /Applications/Hammerspoon.app ]; then
+  if ! command -v brew >/dev/null; then
+    echo "Install Homebrew first: https://brew.sh" >&2
+    exit 1
+  fi
+  brew install --cask --no-binaries hammerspoon
+fi
+
+tmp="$(mktemp -d)"
+trap 'rm -rf "$tmp"' EXIT
+curl -fsSL "https://github.com/$repo/archive/refs/heads/main.tar.gz" | tar -xz -C "$tmp"
+
+mkdir -p "$config/Spoons"
+rm -rf "$config/Spoons/SidecarSnap.spoon"
+cp -R "$tmp/SidecarSnap-main/SidecarSnap.spoon" "$config/Spoons/"
+
+touch "$config/init.lua"
+if ! grep -q 'loadSpoon("SidecarSnap")' "$config/init.lua"; then
+  printf '\nhs.loadSpoon("SidecarSnap"):start()\nhs.autoLaunch(true)\n' >> "$config/init.lua"
+fi
+
+pkill -x Hammerspoon || true
+open -a Hammerspoon
+
+echo "SidecarSnap installed. Give Hammerspoon Accessibility access when macOS asks."
